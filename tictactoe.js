@@ -1,90 +1,136 @@
-const statusDisplay = document.querySelector('.game--status')
+//left off here at 7:08 https://www.youtube.com/watch?v=B3pmT7Cpi24
+//const GameBoardObj = (function () {
+    let gameBoard = new Array(9).fill("null");
+    console.log(gameBoard);
+    
+//})();
 
-let gameActive = true;
 
-let currentPlayer = "X";
+//Reset Button
+document.getElementById("reset").addEventListener('click', resetBtn);
 
-let gameState = ['','','','','','','','',''];
-//messages for turns/win/draw
-const winningMessage = () => `Player ${currentPlayer} has won!`;
-const drawMessage = () => `Game ended in a draw!`;
-const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
-//show's player turn
-statusDisplay.innerHTML = currentPlayerTurn();
-
-//updates array with at clicked location with X or O depending on the turn
-//updates the game board with X or O depending on the turn
-
-function handleCellPlayed(clickedCell, clickedCellIndex) {
-    gameState[clickedCellIndex] = currentPlayer;
-    clickedCell.innerHTML = currentPlayer;
+function resetBtn(){
+    
+    const x= document.querySelectorAll(".board__tile");
+    for (let i=0;i<x.length;i++){
+        x[i].innerHTML="";
+    }
+    delete lll;
+    lll();
+    gameBoard=["null","null","null","null","null","null","null","null","null",];
+    //problem wont update display after you press reset
+    document.querySelector(".display").innerHTML= `Player <span class="display-player">${currentPlayer}</span>'s turn`;
+    document.querySelector(".board").classList.remove("unclick");
+    for(let v=0;v<lis_array.length;v++){
+        
+            lis_array[v].classList.remove("winner"); 
+        
+    }
 }
-//changes the current player. Also review terniary operators
-//updates status display
-function handlePlayerChange() {
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
-    statusDisplay.innerHTML = currentPlayerTurn();
+//Other important functions
+//maybe get board to match up with array so you can use the array to check a winner
+
+//Mark board and update array
+//document.querySelectorAll("[data-index]").forEach(tile => {
+  // this.addEventListener('click', addMarks(tile.dataset.index)) 
+//});
+  
+//problem below:
+let currentPlayer= 'X';
+
+
+
+function switchTurns(){
+ if (currentPlayer==='X') {
+     currentPlayer='O';
+     document.querySelector('.display-player').innerHTML= currentPlayer;
+ } else {
+     currentPlayer='X';
+     document.querySelector('.display-player').innerHTML= currentPlayer;
+ }
 }
-const winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
+//update display
+//document.querySelector('.display-player').innerHTML= currentPlayer;
+
+
+let lis= document.querySelectorAll("[data-index]");
+
+let lis_array = Array.from(lis);
+
+function lll() {lis.forEach(function(elem) {
+    elem.addEventListener('click', function(e) {
+        if(currentPlayer==='X'){
+            let i= e.target.dataset.index;
+            elem.innerHTML= currentPlayer; 
+            //Use to update array:
+            
+            gameBoard[i]=currentPlayer;
+            checkWinner();
+            switchTurns();
+        } else if (currentPlayer==='O'){
+            let i= e.target.dataset.index;
+            elem.innerHTML= currentPlayer;
+            gameBoard[i]=currentPlayer;
+            checkWinner();
+            switchTurns();
+        }
+        console.log("clicked")
+}, { once: true });
+});
+}
+lll();
+/*function addMarks(i){
+    //update array and get x or o to show up on board when yoy uclick
+// data-index
+    console.log(`tile clicked: ${i}`);
+}*/
+//problem above
+
+let winningCombinations = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
 ];
-//checks for winners and updates status display 
-function handleResultValidation() {
-    let roundWon = false;
-    for (let i = 0; i <= 7; i++) {
-        const winCondition = winningConditions[i];
-        let a = gameState[winCondition[0]];
-        let b = gameState[winCondition[1]];
-        let c = gameState[winCondition[2]];
-        if (a === '' || b === '' || c === '') {
-            continue;
-        }
-        if (a === b && b === c) {
-            roundWon = true;
-            break
-        }
-    }
-if (roundWon) {
-        statusDisplay.innerHTML = winningMessage();
-        gameActive = false;
-        return;
-    }
-    let roundDraw = !gameState.includes("");
-    if (roundDraw) {
-        statusDisplay.innerHTML = drawMessage();
-        gameActive = false;
-        return;
-    }
-    handlePlayerChange();
-}
 
-function handleCellClick(clickedCellEvent) {
-    const clickedCell = clickedCellEvent.target;
-    const clickedCellIndex = parseInt(
-        clickedCell.getAttribute('data-cell-index')
-      );
-      if (gameState[clickedCellIndex] !== "" || !gameActive) {
-        return;
-    }
-    handleCellPlayed(clickedCell, clickedCellIndex);
-    handleResultValidation();
+function checkWinner(){
+    //if (if the values at these indexes are equal thereś a winner;gameBoard contains all Xs or all Os at the indexes in winningCombinations theres a winner)
+for (let j=0;j<winningCombinations.length;j++){
+    for (let k=0;k<gameBoard.length;k++){
+    
+        if(gameBoard[winningCombinations[j][0]]==="null"||gameBoard[winningCombinations[j][1]]==="null"||gameBoard[winningCombinations[j][2]]==="null"){
+    console.log('No winner');
+        } else if(gameBoard[winningCombinations[j][0]]===gameBoard[winningCombinations[j][1]] &&gameBoard[winningCombinations[j][0]]===gameBoard[winningCombinations[j][2]]){
+        console.log('Winner')
+        document.querySelector(".display").innerHTML=`Player ${currentPlayer} wins!`;
+        document.querySelector(".board").classList.add("unclick");
+            //loop through datasets if equal current player then turn green
+    
+            for(let v=0;v<lis_array.length;v++){
+                if(lis_array[v].textContent===currentPlayer){
+                    lis_array[v].classList.add("winner"); 
+                }
+            }
+       //lis[gameBoard[winningCombinations[j][0]]];
+        //gameBoard[winningCombinations[j][1]];
+        //gameBoard[winningCombinations[j][2]];
 }
-//restarts game. empties board and array. Also sets current player to X. Review forEach() method
-function handleRestartGame() {
-    gameActive = true;
-    currentPlayer = "X";
-    gameState = ["", "", "", "", "", "", "", "", ""];
-    statusDisplay.innerHTML = currentPlayerTurn();
-    document.querySelectorAll('.cell')
-               .forEach(cell => cell.innerHTML = "");
+    //for (let i=0;i<gameBoard.length;i++){
+
+    //}
 }
-//add event listeners to the cells and makes them clickable
-document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
-document.querySelector('.game--restart').addEventListener('click', handleRestartGame);
+}
+//return winningCombinations.some(combination => {
+  //  return combination.every(index => {
+    //    return lis[index].classList.contains(currentPlayer);
+  //  })
+//})
+//}
+
+//if(checkWinner(currentPlayer)){
+  //  console.log('winner')
+}
