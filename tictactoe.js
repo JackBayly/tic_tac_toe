@@ -78,7 +78,6 @@ function checkWinner() {
 
     for (let j = 0; j < winningCombinations.length; j++) {
         for (let k = 0; k < gameBoard.length; k++) {
-
             if (gameBoard[winningCombinations[j][0]] === "null" || gameBoard[winningCombinations[j][1]] === "null" || gameBoard[winningCombinations[j][2]] === "null") {
                 console.log('No winner');
             } else if (gameBoard[winningCombinations[j][0]] === gameBoard[winningCombinations[j][1]] && gameBoard[winningCombinations[j][0]] === gameBoard[winningCombinations[j][2]]) {
